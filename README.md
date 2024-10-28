@@ -8,6 +8,14 @@ the database with the correct db and credentials setup. Use the following comman
 docker compose up -d
 ```
 
+### testing
+The code starts a PostgreSQL docker container to run the the [shoppingcart/repo/postgres](shoppingcart/repo/postgres) package tests.
+In order to be able to run these tests you must have a running docker compatible daemon on your machine. The tests can
+be run using plain `go test`:
+```shell
+go test -cover ./...
+```
+
 ### building
 [goreleaser](https://goreleaser.com/) is used to build and package a Docker image out of the code. You can create a
 snapshot release by running:
@@ -63,6 +71,11 @@ to automatically generate mocks rather than writing them on my own. For assertio
 because it helps to reduce a lot of `if err != nil {}` constructs in tests and in my opinion makes test code easier to read.
 Both of these libraries aren't strictly needed but they make my life a bit easier and thus I used them.
 
+[github.com/ory/dockertest/v3](https://pkg.go.dev/github.com/ory/dockertest/v3) Is used to start a PostgreSQL docker
+container for the [shoppingcart/repo/postgres](shoppingcart/repo/postgres) package tests. I did this, because I do not like
+to mock tests that use SQL because I think mocking these kind of tests doesn't really provide value except from test
+coverage.
+
 ## Self assessment
 The solution is on the more complex side for such a simple task. However, I tried to showcase how code can be decoupled
 by using the ports and adapters architecture pattern. In my opinion this is a good baseline for a well-structured codebase
@@ -81,7 +94,7 @@ calls. But once again this can be solved by middlewares.
 
 #### reservations worker pool
 Currently each pending reservation is processed one after each other. In a real world example this should probably be done
-in parallel using a configurabe worker pool.
+in parallel using a configurable worker pool.
 
 #### configuration
 As of know all configuration is hardcoded (database connection strings, timeouts etc.). Configuration should be possible
@@ -94,7 +107,7 @@ There are a few `TODO` in code with small things that should be cleaned up befor
 There is currently no CI/CD pipeline. Usually I'd use GitHub actions or GitLab CI/CD for that. The use of goreleaser makes
 it very easy to add a pipeline which automatically creates releases and publishes the artifacts.
 
-#### liniting
+#### linting
 Usually I use a special [golangci-lint](https://golangci-lint.run/) configuration and CI/CD setup in a production project.
 This is missing currently. However, the default configuration of `golangci-lint` does not report any lint errors.
 
