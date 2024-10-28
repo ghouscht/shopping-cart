@@ -27,7 +27,7 @@ func main() {
 	db, err := sql.Open("pgx", "postgres://shoppingcart:V3ry$3cr3t@localhost:5432/shoppingcart?sslmode=disable")
 	if err != nil {
 		slog.Error("open db", slog.Any("err", err))
-		os.Exit(1)
+		os.Exit(1) // TODO: skips defer
 	}
 
 	pingCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
@@ -35,7 +35,7 @@ func main() {
 
 	if err := db.PingContext(pingCtx); err != nil {
 		slog.Error("ping database", slog.Any("err", err))
-		os.Exit(1)
+		os.Exit(1) // TODO: skips defer
 	}
 
 	shoppingcartRepo := postgres.NewShoppingCartRepository(db)
@@ -92,6 +92,7 @@ func run(ctx context.Context, repo shoppingcart.Repository, reservation shopping
 		return fmt.Errorf("http listen: %w", err)
 	}
 
+	// Wait until the reservation processor is done as well.
 	wg.Wait()
 
 	return <-shutdownErr

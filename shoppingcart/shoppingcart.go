@@ -6,6 +6,15 @@ import (
 	"net/http"
 )
 
+// Item represents a single item in the shopping cart. For the sake of simplicity the Repository uses the same data
+// type to avoid the need for a conversion. Usually the repository should use a distinct type.
+type Item struct {
+	Name          string `json:"name"`
+	UserID        int    `json:"userID,omitempty"`
+	Quantity      int    `json:"quantity"`
+	ReservationID *int   `json:"reservationID"`
+}
+
 type GetItemsResponse struct {
 	Items []Item `json:"items"`
 }
@@ -18,7 +27,7 @@ type AddItemRequest struct {
 // Register registers the shoppingcart routes to the given ServeMux.
 func Register(mux *http.ServeMux, repo Repository) {
 	mux.HandleFunc("GET /items", getItems(repo))
-	mux.HandleFunc("POST /items", AddItem(repo))
+	mux.HandleFunc("POST /items", addItem(repo))
 }
 
 // The application currently only handles a single users shopping cart. In a real application there would probably be
@@ -44,7 +53,7 @@ func getItems(repo Repository) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func AddItem(repo Repository) func(http.ResponseWriter, *http.Request) {
+func addItem(repo Repository) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var requestData AddItemRequest
 

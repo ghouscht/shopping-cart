@@ -14,12 +14,3 @@ type Repository interface {
 type Reservation interface {
 	ReserveItem(ctx context.Context, item string, quantity int) (int, error)
 }
-
-// Item represents a single item in the shopping cart. For the sake of simplicity the Repository uses the same data
-// type to avoid the need for a conversion. Usually the repository should use a distinct type.
-type Item struct {
-	Name          string `json:"name"`
-	UserID        int    `json:"userID,omitempty"`
-	Quantity      int    `json:"quantity"`
-	ReservationID *int   `json:"reservationID"`
-}
