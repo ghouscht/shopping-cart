@@ -1,7 +1,7 @@
 # shopping cart
 
 ## How to use/run the code
-**The code expects a running postgresql database reachable on `localhost:5432`** A docker-compose file is provided to run
+**The code expects a running postgresql database reachable on `localhost:5432`** A [docker-compose file](docker-compose.yaml) is provided to run
 the database with the correct db and credentials setup. Use the following command to start the database or have a look at
 [docker-compose.yaml](docker-compose.yaml) for more information (db, credentials etc.).
 ```shell
@@ -16,7 +16,7 @@ snapshot release by running:
 goreleaser release --snapshot --clean
 ```
 
-This will build binaries for darwin/linux x86/arm64 (see the [configuration(.goreleaser.yaml) of goreleaser for more
+This will build binaries for darwin/linux x86/arm64 (see the [configuration](.goreleaser.yaml) of goreleaser for more
 information]).
 
 If you do not want to use `goreleaser` you can simply use plain `go` to build/test the code.
@@ -54,12 +54,12 @@ is needed.
 
 #### sql
 Same as with http, stdlib `database/sql` provides enough functionality for what is needed. Of course an SQL driver is needed.
-In the past I worked with github.com/jackc/pgx/v5, which works well together with the stdlib and thus I decided to use it
+In the past I worked with [github.com/jackc/pgx/v5](https://pkg.go.dev/github.com/jackc/pgx/v5), which works well together with the stdlib and thus I decided to use it
 for this project as well.
 
 #### mocks/testing
-For such a simple project the stdlib packages would be enough. However I decided to use github.com/uber-go/mock to be able
-to automatically generate mocks rather than writing them on my own. For assertions I like to use github.com/stretchr/testify
+For such a simple project the stdlib packages would be enough. However I decided to use [go.uber.org/mock](https://pkg.go.dev/go.uber.org/mock) to be able
+to automatically generate mocks rather than writing them on my own. For assertions I like to use [github.com/stretchr/testify](https://pkg.go.dev/github.com/stretchr/testify)
 because it helps to reduce a lot of `if err != nil {}` constructs in tests and in my opinion makes test code easier to read.
 Both of these libraries aren't strictly needed but they make my life a bit easier and thus I used them.
 
@@ -72,7 +72,7 @@ recommend doing this for something that is meant to be placed in production.
 ### What is missing?
 #### metrics
 Proper application metrics should be added for monitoring purposes. Thanks to the ports and adapters architecture this can
-easily be done by wrapping the port interfaces with an implementation that propagates metrics. Usually these "middleware"
+easily be done by wrapping the port interfaces with an implementation that publishes metrics. Usually these "middleware"
 implementations can be generated but there was not enough time left to do this.
 
 #### proper (access) logging
