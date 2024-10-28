@@ -25,7 +25,7 @@ goreleaser release --snapshot --clean
 ```
 
 This will build binaries for darwin/linux x86/arm64 (see the [configuration](.goreleaser.yaml) of goreleaser for more
-information]).
+information).
 
 If you do not want to use `goreleaser` you can simply use plain `go` to build/test the code.
 
@@ -39,14 +39,14 @@ component called `shoppingcart` which has two ports:
 #### Repository port ([shoppingcart/repo/](shoppingcart/repo/))
 The Repository port contains two different adapters:
 
-- `mock` - As the name says this adapter can be used for testing. The code is generated using [gomock](https://github.com/uber-go/mock).
+- `mock` - As the name says this adapter can be used for testing. The code is generated using [gomock](https://pkg.go.dev/go.uber.org/mock).
 - `postgres` - Is an adapter to store data in a PostgreSQL database.
 
 #### Reservation port ([shoppingcart/reservation/](shoppingcart/reservation/))
 The Reservation port has three different adapters:
 - `dummy` - As the name implies provides a dummy adapter implementation which simply returns a random number as `reservation_id`.
 - `http` - Is an example how an adapter could look like that talks to an external http service.
-- `mock` - Is a generated mock adapter for testing. The code is generated using [gomock](https://github.com/uber-go/mock).
+- `mock` - Is a generated mock adapter for testing. The code is generated using [gomock](https://pkg.go.dev/go.uber.org/mock).
 
 ### Persistence
 I simply picked PostgreSQL because I'm familiar with it and because I had a boilerplate application at hand. In a real
@@ -66,21 +66,21 @@ In the past I worked with [github.com/jackc/pgx/v5](https://pkg.go.dev/github.co
 for this project as well.
 
 #### mocks/testing
-For such a simple project the stdlib packages would be enough. However I decided to use [go.uber.org/mock](https://pkg.go.dev/go.uber.org/mock) to be able
+For such a simple project the stdlib packages would be enough. However I decided to use [gomock](https://pkg.go.dev/go.uber.org/mock) to be able
 to automatically generate mocks rather than writing them on my own. For assertions I like to use [github.com/stretchr/testify](https://pkg.go.dev/github.com/stretchr/testify)
 because it helps to reduce a lot of `if err != nil {}` constructs in tests and in my opinion makes test code easier to read.
 Both of these libraries aren't strictly needed but they make my life a bit easier and thus I used them.
 
-[github.com/ory/dockertest/v3](https://pkg.go.dev/github.com/ory/dockertest/v3) Is used to start a PostgreSQL docker
+[github.com/ory/dockertest/v3](https://pkg.go.dev/github.com/ory/dockertest/v3) is used to start a PostgreSQL docker
 container for the [shoppingcart/repo/postgres](shoppingcart/repo/postgres) package tests. I did this, because I do not like
-to mock tests that use SQL because I think mocking these kind of tests doesn't really provide value except from test
+to mock tests that use SQL because I think mocking these kind of tests doesn't really provide value except for test
 coverage.
 
 ## Self assessment
 The solution is on the more complex side for such a simple task. However, I tried to showcase how code can be decoupled
 by using the ports and adapters architecture pattern. In my opinion this is a good baseline for a well-structured codebase
-that is maintainable in the long term. As I already wrote for such a simple task it might feel like overkill and I wouldn't
-recommend doing this for something that is meant to be placed in production.
+that is maintainable in the long term. As I already wrote for such a simple task it is a bit overkill and I wouldn't
+recommend doing this for something at this scale that is meant to be placed in production.
 
 ### What is missing?
 #### metrics
@@ -95,6 +95,8 @@ calls. But once again this can be solved by middlewares.
 #### reservations worker pool
 Currently each pending reservation is processed one after each other. In a real world example this should probably be done
 in parallel using a configurable worker pool.
+I decided to use a simple polling approach to asynchronously process the reservations as this is probably the simplest
+solution.
 
 #### configuration
 As of know all configuration is hardcoded (database connection strings, timeouts etc.). Configuration should be possible
@@ -117,6 +119,7 @@ There is a lot more that could be done:
 - readiness/liveness probes
 - SSL/TLS
 - rate limiting and security headers
+- database migrations
 - etc.
 
 
